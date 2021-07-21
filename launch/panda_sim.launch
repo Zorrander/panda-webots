@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<launch>
+  <arg name="auto-close" default="false" doc="Startup mode"/>
+
+  <param name ="/use_sim_time" value="true"/>
+  <param name="robot_description" command="$(find xacro)/xacro --inorder '$(find franka_description)/robots/panda_arm_hand.urdf.xacro'" />
+
+
+  <!-- start Webots -->
+  <include file="$(find webots_ros)/launch/webots.launch">
+    <arg name="mode" value="realtime"/>
+    <arg name="world" value="$(find panda_webots)/worlds/franka_simulation.wbt"/>
+  </include>
+
+  <!-- Robot state publisher -->
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+    <param name="publish_frequency" type="double" value="50.0" />
+    <param name="tf_prefix" type="string" value="" />
+  </node>
+
+    <!-- Webots controller -->
+  <include file="$(find panda_webots)/launch/panda_controller.launch">
+    <arg name="auto-close" value="$(arg auto-close)"/>
+  </include>
+
+
+
+</launch>

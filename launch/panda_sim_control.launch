@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<launch>
+
+  <arg name="load_gripper" default="true" />
+
+  <!-- If needed, broadcast static tf for robot root -->
+  <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_1" args="0 0 0 0 0 0 world panda_link0" />
+
+  <node name="joint_state_desired_publisher" pkg="topic_tools" type="relay" args="joint_states joint_states_desired" />
+
+
+<include file="$(find panda_moveit_config)/launch/planning_context.launch">
+  <arg name="load_robot_description" value="true"/>
+</include>
+
+  <include file="$(find panda_moveit_config)/launch/move_group.launch">
+    <arg name="load_gripper" value="$(arg load_gripper)" />
+  </include>
+
+
+  <include file="$(find panda_moveit_config)/launch/moveit_rviz.launch" />
+
+  <node name="robot_control" pkg="panda_webots" type="robot_control.py" output="screen" />
+  
+</launch>
